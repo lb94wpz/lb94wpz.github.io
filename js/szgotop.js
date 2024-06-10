@@ -1,0 +1,1 @@
+$(function(){$(window).scroll(function(){200<$(window).scrollTop()?$(".back-to-top").css("top","-250px"):$(".back-to-top").css("top","-900px")}),$(".back-to-top").click(function(){$("body,html").animate({scrollTop:0},600)})});
