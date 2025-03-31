@@ -1,0 +1,1 @@
+function hideLRC(){document.querySelector(".aplayer-icon-lrc")&&(document.removeEventListener("DOMNodeInserted",hideLRC),setTimeout(function(){document.querySelector(".aplayer-icon-lrc").click()},1))}document.addEventListener("DOMNodeInserted",hideLRC);
