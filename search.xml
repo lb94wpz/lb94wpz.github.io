@@ -1718,6 +1718,56 @@ COPY ["src", "dest"]
       </tags>
   </entry>
   <entry>
+    <title>Dockerfile 常用指令</title>
+    <url>/posts/6cc4d10b/</url>
+    <content><![CDATA[<p><span></span></p>
+<span id="more"></span>
+<p>记录下<code>Dockerfile</code>中常用的指令，完整列表和说明可参考官方文档。</p>
+<h2 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><figure class="highlight dockerfile"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> scratch</span><br><span class="line"></span><br><span class="line"><span class="keyword">MAINTAINER</span> lz94wpz</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /workspaces</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> alpine-minirootfs-3.9.3-x86_64.tar.gz /</span></span><br><span class="line"><span class="comment"># COPY ["alpine-minirootfs-3.9.3-x86_64.tar.gz", "/"]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> alpine-minirootfs-3.9.3-x86_64.tar.gz /</span></span><br><span class="line"><span class="comment"># ADD ["alpine-minirootfs-3.9.3-x86_64.tar.gz", "/"]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> HELLO hello</span><br><span class="line"><span class="keyword">ENV</span> WORLD world</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> [<span class="string">"/bin/sh"</span>, <span class="string">"-c"</span>, <span class="string">"echo <span class="variable">$HELLO</span>"</span>]</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">echo</span> <span class="variable">$WORLD</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">"/bin/sh"</span>, <span class="string">"-c"</span>, <span class="string">"/bin/echo <span class="variable">$HELLO</span>"</span>]</span></span><br><span class="line"><span class="comment"># CMD echo $WORLD</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ENTRYPOINT ["/bin/sh", "-c", "/bin/echo $HELLO"]</span></span><br><span class="line"><span class="comment"># ENTRYPOINT echo $WORLD</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">VOLUME</span><span class="language-bash"> /test</span></span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight sh"><table><tbody><tr><td class="code"><pre><span class="line">docker build -t IMAGE_NAME:TAG .  <span class="comment"># 默认使用指定路径下的Dockerfile文件构建镜像，Dockerfile文件不存在时会报错</span></span><br><span class="line">docker build -t IMAGE_NAME:TAG -f Dockerfile .  <span class="comment"># 使用-f参数指定构建镜像的Dockerfile文件</span></span><br></pre></td></tr></tbody></table></figure>
+<h2 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h2><p>指定基础镜像。</p>
+<h2 id="MAINTAINER"><a href="#MAINTAINER" class="headerlink" title="MAINTAINER"></a>MAINTAINER</h2><p>设置镜像作者信息。</p>
+<h2 id="WORKDIR"><a href="#WORKDIR" class="headerlink" title="WORKDIR"></a>WORKDIR</h2><p>设置镜像的工作目录，默认为<code>/</code>根目录。</p>
+<h2 id="ENV"><a href="#ENV" class="headerlink" title="ENV"></a>ENV</h2><p>设置环境变量。可设置多个。</p>
+<h2 id="EXPOSE"><a href="#EXPOSE" class="headerlink" title="EXPOSE"></a>EXPOSE</h2><p>指定容器中的进程会监听某个端口，<code>Docker</code>可以将该端口暴露出来。</p>
+<h2 id="VOLUME"><a href="#VOLUME" class="headerlink" title="VOLUME"></a>VOLUME</h2><p>将文件或目录声明为<code>volume</code>。</p>
+<h2 id="COPY-amp-amp-ADD"><a href="#COPY-amp-amp-ADD" class="headerlink" title="COPY &amp;&amp; ADD"></a>COPY &amp;&amp; ADD</h2><p><code>COPY</code>和<code>ADD</code>都是用于将构建环境中指定的文件添加到镜像中的。不同的是如果指定的文件是归档文件(<code>tar</code>, <code>zip</code>, <code>tgz</code>, <code>xz</code>等)，<code>ADD</code>指令会将其解压，<code>COPY</code>指令不会。</p>
+<p><code>COPY</code>和<code>ADD</code>都支持两种形式的写法：</p>
+<pre><code>COPY src dest
+COPY ["src", "dest"]
+
+ADD src dest
+ADD ["src", "dest"]
+</code></pre><h2 id="RUN-amp-amp-CMD-amp-amp-ENTRYPOINT"><a href="#RUN-amp-amp-CMD-amp-amp-ENTRYPOINT" class="headerlink" title="RUN &amp;&amp; CMD &amp;&amp; ENTRYPOINT"></a>RUN &amp;&amp; CMD &amp;&amp; ENTRYPOINT</h2><p><code>RUN</code>指定的命令在<code>docker build</code>构建镜像的时候执行。可以有多个<code>RUN</code>指令，且每个都生效。</p>
+<p><code>CMD</code>指定的命令在容器启动时执行。可以有多个<code>CMD</code>指令，但只有最后一个生效。<code>CMD</code>指定的命令会被<code>docker run</code>之后的参数替换。</p>
+<p><code>ENTRYPOINT</code>指定的命令在容器启动时执行。可以有多个<code>ENTRYPOINT</code>指令，但只有最后一个生效。<code>CMD</code>或<code>docker run</code>之后的参数会被当做参数传递给<code>ENTRYPOINT</code>。<code>ENTRYPOINT</code>命令一定会执行。</p>
+<p><code>RUN</code>、<code>CMD</code>和<code>ENTRYPOINT</code>都支持两种形式的写法：</p>
+<h3 id="Shell-格式"><a href="#Shell-格式" class="headerlink" title="Shell 格式"></a>Shell 格式</h3><figure class="highlight sh"><figcaption><span>Shell 格式</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">&lt;instruction&gt; &lt;<span class="built_in">command</span>&gt;</span><br></pre></td></tr></tbody></table></figure>
+<p>当指令执行时，<code>Shell</code>格式的写法底层会调用<code>/bin/sh -c &lt;command&gt;</code>。</p>
+<p>如：</p>
+<pre><code>ENV WORLD world
+ENTRYPOINT echo "Hello $WORLD"
+</code></pre><p>执行<code>docker run &lt;image&gt;</code>将输出：<code>Hello world</code>。</p>
+<h3 id="Exec-格式"><a href="#Exec-格式" class="headerlink" title="Exec 格式"></a>Exec 格式</h3><figure class="highlight sh"><figcaption><span>Exec 格式</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">&lt;instruction&gt; [<span class="string">"executable"</span>, <span class="string">"param1"</span>, <span class="string">"param2"</span>, ...]</span><br></pre></td></tr></tbody></table></figure>
+<p>当指令执行时，<code>Exec</code>格式的写法会直接调用<code>&lt;command&gt;</code>，不会被<code>shell</code>解析。</p>
+<p>如：</p>
+<pre><code>ENV WORLD world
+ENTRYPOINT ["/bin/echo", "Hello $WORLD"]
+</code></pre><p>执行<code>docker run &lt;image&gt;</code>将输出：<code>Hello $WORLD</code>。</p>
+<p>注意环境变量<code>WORLD</code>没有被替换。如果希望环境变量被替换，修改为：</p>
+<pre><code>ENV WORLD world
+ENTRYPOINT ["/bin/sh", "-c", "echo Hello $WORLD"]
+</code></pre><h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://mp.weixin.qq.com/s?__biz=MzIwMTM5MjUwMg==&amp;mid=2653587610&amp;idx=1&amp;sn=fc2c45c4eb11ecc20d6bba50cc7b8cad&amp;chksm=8d308083ba470995f3e784386f4d09859fa7bdf93b0772d1b03669dd7612c818c6280f7f6b00&amp;scene=21#wechat_redirect">Dockerfile 常用指令 - 每天5分钟玩转 Docker 容器技术（16）</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzIwMTM5MjUwMg==&amp;mid=2653587614&amp;idx=1&amp;sn=2070e193da6b71861052e393eccae055&amp;chksm=8d308087ba4709915514e06e73bba8a93fca5510f910552a8290e9a1b4ae111d7a3fd230c0a5&amp;scene=21#wechat_redirect">RUN vs CMD vs ENTRYPOINT - 每天5分钟玩转 Docker 容器技术（17）</a></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Dockerfile 之 RUN/CMD/ENTRYPOINT 指令</title>
     <url>/posts/2262a086/</url>
     <content><![CDATA[<p><span></span></p>
@@ -1775,56 +1825,6 @@ See 'docker run --help'.
 <p>执行<code>docker run &lt;image&gt;</code>启动容器后将输出：<code>Hello world</code>。执行<code>docker run &lt;image&gt; 世界</code>启动容器后将输出：<code>Hello 世界</code>。</p>
 <figure class="highlight dockerfile"><figcaption><span>Dockerfile 片段</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> <span class="string">"echo Hello"</span></span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">"world"</span>]</span></span><br></pre></td></tr></tbody></table></figure>
 <p>执行<code>docker run &lt;image&gt;</code>启动容器后将输出：<code>Hello</code>。执行<code>docker run &lt;image&gt; 世界</code>启动容器后将输出：<code>Hello</code>。<code>ENTRYPOINT</code>的<code>Shell</code>格式会忽略任何<code>CMD</code>或<code>docker run</code>提供的参数。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Dockerfile 常用指令</title>
-    <url>/posts/6cc4d10b/</url>
-    <content><![CDATA[<p><span></span></p>
-<span id="more"></span>
-<p>记录下<code>Dockerfile</code>中常用的指令，完整列表和说明可参考官方文档。</p>
-<h2 id="Dockerfile"><a href="#Dockerfile" class="headerlink" title="Dockerfile"></a>Dockerfile</h2><figure class="highlight dockerfile"><table><tbody><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> scratch</span><br><span class="line"></span><br><span class="line"><span class="keyword">MAINTAINER</span> lz94wpz</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /workspaces</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> alpine-minirootfs-3.9.3-x86_64.tar.gz /</span></span><br><span class="line"><span class="comment"># COPY ["alpine-minirootfs-3.9.3-x86_64.tar.gz", "/"]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> alpine-minirootfs-3.9.3-x86_64.tar.gz /</span></span><br><span class="line"><span class="comment"># ADD ["alpine-minirootfs-3.9.3-x86_64.tar.gz", "/"]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> HELLO hello</span><br><span class="line"><span class="keyword">ENV</span> WORLD world</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> [<span class="string">"/bin/sh"</span>, <span class="string">"-c"</span>, <span class="string">"echo <span class="variable">$HELLO</span>"</span>]</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">echo</span> <span class="variable">$WORLD</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">"/bin/sh"</span>, <span class="string">"-c"</span>, <span class="string">"/bin/echo <span class="variable">$HELLO</span>"</span>]</span></span><br><span class="line"><span class="comment"># CMD echo $WORLD</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ENTRYPOINT ["/bin/sh", "-c", "/bin/echo $HELLO"]</span></span><br><span class="line"><span class="comment"># ENTRYPOINT echo $WORLD</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">VOLUME</span><span class="language-bash"> /test</span></span><br></pre></td></tr></tbody></table></figure>
-<figure class="highlight sh"><table><tbody><tr><td class="code"><pre><span class="line">docker build -t IMAGE_NAME:TAG .  <span class="comment"># 默认使用指定路径下的Dockerfile文件构建镜像，Dockerfile文件不存在时会报错</span></span><br><span class="line">docker build -t IMAGE_NAME:TAG -f Dockerfile .  <span class="comment"># 使用-f参数指定构建镜像的Dockerfile文件</span></span><br></pre></td></tr></tbody></table></figure>
-<h2 id="FROM"><a href="#FROM" class="headerlink" title="FROM"></a>FROM</h2><p>指定基础镜像。</p>
-<h2 id="MAINTAINER"><a href="#MAINTAINER" class="headerlink" title="MAINTAINER"></a>MAINTAINER</h2><p>设置镜像作者信息。</p>
-<h2 id="WORKDIR"><a href="#WORKDIR" class="headerlink" title="WORKDIR"></a>WORKDIR</h2><p>设置镜像的工作目录，默认为<code>/</code>根目录。</p>
-<h2 id="ENV"><a href="#ENV" class="headerlink" title="ENV"></a>ENV</h2><p>设置环境变量。可设置多个。</p>
-<h2 id="EXPOSE"><a href="#EXPOSE" class="headerlink" title="EXPOSE"></a>EXPOSE</h2><p>指定容器中的进程会监听某个端口，<code>Docker</code>可以将该端口暴露出来。</p>
-<h2 id="VOLUME"><a href="#VOLUME" class="headerlink" title="VOLUME"></a>VOLUME</h2><p>将文件或目录声明为<code>volume</code>。</p>
-<h2 id="COPY-amp-amp-ADD"><a href="#COPY-amp-amp-ADD" class="headerlink" title="COPY &amp;&amp; ADD"></a>COPY &amp;&amp; ADD</h2><p><code>COPY</code>和<code>ADD</code>都是用于将构建环境中指定的文件添加到镜像中的。不同的是如果指定的文件是归档文件(<code>tar</code>, <code>zip</code>, <code>tgz</code>, <code>xz</code>等)，<code>ADD</code>指令会将其解压，<code>COPY</code>指令不会。</p>
-<p><code>COPY</code>和<code>ADD</code>都支持两种形式的写法：</p>
-<pre><code>COPY src dest
-COPY ["src", "dest"]
-
-ADD src dest
-ADD ["src", "dest"]
-</code></pre><h2 id="RUN-amp-amp-CMD-amp-amp-ENTRYPOINT"><a href="#RUN-amp-amp-CMD-amp-amp-ENTRYPOINT" class="headerlink" title="RUN &amp;&amp; CMD &amp;&amp; ENTRYPOINT"></a>RUN &amp;&amp; CMD &amp;&amp; ENTRYPOINT</h2><p><code>RUN</code>指定的命令在<code>docker build</code>构建镜像的时候执行。可以有多个<code>RUN</code>指令，且每个都生效。</p>
-<p><code>CMD</code>指定的命令在容器启动时执行。可以有多个<code>CMD</code>指令，但只有最后一个生效。<code>CMD</code>指定的命令会被<code>docker run</code>之后的参数替换。</p>
-<p><code>ENTRYPOINT</code>指定的命令在容器启动时执行。可以有多个<code>ENTRYPOINT</code>指令，但只有最后一个生效。<code>CMD</code>或<code>docker run</code>之后的参数会被当做参数传递给<code>ENTRYPOINT</code>。<code>ENTRYPOINT</code>命令一定会执行。</p>
-<p><code>RUN</code>、<code>CMD</code>和<code>ENTRYPOINT</code>都支持两种形式的写法：</p>
-<h3 id="Shell-格式"><a href="#Shell-格式" class="headerlink" title="Shell 格式"></a>Shell 格式</h3><figure class="highlight sh"><figcaption><span>Shell 格式</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">&lt;instruction&gt; &lt;<span class="built_in">command</span>&gt;</span><br></pre></td></tr></tbody></table></figure>
-<p>当指令执行时，<code>Shell</code>格式的写法底层会调用<code>/bin/sh -c &lt;command&gt;</code>。</p>
-<p>如：</p>
-<pre><code>ENV WORLD world
-ENTRYPOINT echo "Hello $WORLD"
-</code></pre><p>执行<code>docker run &lt;image&gt;</code>将输出：<code>Hello world</code>。</p>
-<h3 id="Exec-格式"><a href="#Exec-格式" class="headerlink" title="Exec 格式"></a>Exec 格式</h3><figure class="highlight sh"><figcaption><span>Exec 格式</span></figcaption><table><tbody><tr><td class="code"><pre><span class="line">&lt;instruction&gt; [<span class="string">"executable"</span>, <span class="string">"param1"</span>, <span class="string">"param2"</span>, ...]</span><br></pre></td></tr></tbody></table></figure>
-<p>当指令执行时，<code>Exec</code>格式的写法会直接调用<code>&lt;command&gt;</code>，不会被<code>shell</code>解析。</p>
-<p>如：</p>
-<pre><code>ENV WORLD world
-ENTRYPOINT ["/bin/echo", "Hello $WORLD"]
-</code></pre><p>执行<code>docker run &lt;image&gt;</code>将输出：<code>Hello $WORLD</code>。</p>
-<p>注意环境变量<code>WORLD</code>没有被替换。如果希望环境变量被替换，修改为：</p>
-<pre><code>ENV WORLD world
-ENTRYPOINT ["/bin/sh", "-c", "echo Hello $WORLD"]
-</code></pre><h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a href="https://mp.weixin.qq.com/s?__biz=MzIwMTM5MjUwMg==&amp;mid=2653587610&amp;idx=1&amp;sn=fc2c45c4eb11ecc20d6bba50cc7b8cad&amp;chksm=8d308083ba470995f3e784386f4d09859fa7bdf93b0772d1b03669dd7612c818c6280f7f6b00&amp;scene=21#wechat_redirect">Dockerfile 常用指令 - 每天5分钟玩转 Docker 容器技术（16）</a></p>
-<p><a href="https://mp.weixin.qq.com/s?__biz=MzIwMTM5MjUwMg==&amp;mid=2653587614&amp;idx=1&amp;sn=2070e193da6b71861052e393eccae055&amp;chksm=8d308087ba4709915514e06e73bba8a93fca5510f910552a8290e9a1b4ae111d7a3fd230c0a5&amp;scene=21#wechat_redirect">RUN vs CMD vs ENTRYPOINT - 每天5分钟玩转 Docker 容器技术（17）</a></p>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">]]></content>
       <categories>
         <category>Docker</category>
