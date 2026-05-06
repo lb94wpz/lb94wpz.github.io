@@ -1,0 +1,1 @@
+function hideLRC(){document.querySelector(".aplayer-icon-lrc")&&(observer.disconnect(),setTimeout(function(){document.querySelector(".aplayer-icon-lrc").click()},100))}window.meting_api="https://meting-api.wpz.homes/api?server=:server&type=:type&id=:id&r=:r";var observer=new MutationObserver(hideLRC);observer.observe(document.body,{childList:!0,subtree:!0});
